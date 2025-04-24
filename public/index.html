@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Service Finder - Find Trusted Professionals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #4F46E5 0%, #10B981 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .service-icon {
+            transition: all 0.3s ease;
+        }
+        .service-icon:hover {
+            transform: scale(1.1);
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 0.5rem;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex items-center cursor-pointer" onclick="window.location.href='/'">
+                        <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-tools text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold text-gray-800 ml-2">Local Service Finder</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/register.html" class="text-gray-600 hover:text-indigo-600">Register</a>
+                    <a href="/login.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-gradient pt-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="text-center text-white">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Find Expert Services Near You</h1>
+                <p class="text-xl mb-8">Connect with trusted professionals for all your service needs</p>
+                
+                <!-- Search Section -->
+                <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-4 flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 relative">
+                        <i class="fas fa-map-marker-alt absolute left-3 top-3 text-gray-400"></i>
+                        <input type="text" id="locationInput" placeholder="Enter your location" value="Vadakara, Kerala, India" class="w-full pl-10 pr-3 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-800">
+                    </div>
+                    <div class="flex-1 relative">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <input type="text" id="serviceInput" placeholder="What service do you need?" class="w-full pl-10 pr-3 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-gray-800">
+                    </div>
+                    <button onclick="searchServices()" class="bg-indigo-600 text-white px-8 py-2 rounded-lg hover:bg-indigo-700">Search</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Map Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold mb-4">Service Providers Near You</h2>
+                <div id="map"></div>
+                <div class="mt-4 text-sm text-gray-600">
+                    <p><i class="fas fa-info-circle mr-2"></i>Showing service providers within 20km radius of Vadakara</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wave Separator -->
+        <div class="w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" class="w-full">
+                <path fill="#f9fafb" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Popular Services -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 class="text-3xl font-bold text-center mb-12">Popular Services</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Service Cards -->
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover cursor-pointer" onclick="bookService('Home Repairs')">
+                <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 mx-auto service-icon">
+                    <i class="fas fa-hammer text-2xl text-indigo-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-2">Home Repairs</h3>
+                <p class="text-gray-600 text-center">Professional repairs for your home maintenance needs</p>
+                <div class="mt-4 flex justify-center">
+                    <span class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">From ₹999/hr</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover cursor-pointer" onclick="bookService('Cleaning')">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto service-icon">
+                    <i class="fas fa-broom text-2xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-2">Cleaning</h3>
+                <p class="text-gray-600 text-center">Expert cleaning services for your space</p>
+                <div class="mt-4 flex justify-center">
+                    <span class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">From ₹499/hr</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover cursor-pointer" onclick="bookService('Electrical')">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 mx-auto service-icon">
+                    <i class="fas fa-plug text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-2">Electrical</h3>
+                <p class="text-gray-600 text-center">Licensed electricians for all your needs</p>
+                <div class="mt-4 flex justify-center">
+                    <span class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">From ₹799/hr</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover cursor-pointer" onclick="bookService('Painting')">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto service-icon">
+                    <i class="fas fa-paint-roller text-2xl text-red-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-2">Painting</h3>
+                <p class="text-gray-600 text-center">Transform your space with our painters</p>
+                <div class="mt-4 flex justify-center">
+                    <span class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">From ₹599/hr</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-gray-100 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">Why Choose Us</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-shield-alt text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Verified Professionals</h3>
+                    <p class="text-gray-600">All service providers are thoroughly vetted and background checked</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-clock text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Quick Response</h3>
+                    <p class="text-gray-600">Get connected with professionals within minutes</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-star text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Satisfaction Guaranteed</h3>
+                    <p class="text-gray-600">100% satisfaction guarantee or your money back</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 class="text-3xl font-bold text-center mb-12">How It Works</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto relative">
+                    <i class="fas fa-search text-2xl text-blue-600"></i>
+                    <span class="absolute -top-2 -right-2 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center">1</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Search</h3>
+                <p class="text-gray-600">Find the service you need</p>
+            </div>
+
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto relative">
+                    <i class="fas fa-user-check text-2xl text-green-600"></i>
+                    <span class="absolute -top-2 -right-2 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center">2</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Book</h3>
+                <p class="text-gray-600">Select your preferred professional</p>
+            </div>
+
+            <div class="text-center">
+                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4 mx-auto relative">
+                    <i class="fas fa-calendar-check text-2xl text-yellow-600"></i>
+                    <span class="absolute -top-2 -right-2 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center">3</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Schedule</h3>
+                <p class="text-gray-600">Pick a convenient time</p>
+            </div>
+
+            <div class="text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto relative">
+                    <i class="fas fa-heart text-2xl text-red-600"></i>
+                    <span class="absolute -top-2 -right-2 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center">4</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Relax</h3>
+                <p class="text-gray-600">Enjoy quality service</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download App Section -->
+    <div class="bg-indigo-600 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="mb-8 md:mb-0">
+                    <h2 class="text-3xl font-bold mb-4">Get Our Mobile App</h2>
+                    <p class="text-lg mb-6">Book services on the go with our mobile app</p>
+                    <div class="flex space-x-4">
+                        <button class="bg-black text-white px-6 py-2 rounded-lg flex items-center">
+                            <i class="fab fa-apple text-2xl mr-2"></i>
+                            App Store
+                        </button>
+                        <button class="bg-black text-white px-6 py-2 rounded-lg flex items-center">
+                            <i class="fab fa-google-play text-2xl mr-2"></i>
+                            Play Store
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3">
+                    <img src="https://placehold.co/300x600" alt="Mobile App" class="w-full rounded-lg shadow-xl">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">About Us</h3>
+                    <p class="text-gray-400">Connecting you with the best service professionals in your area.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Services</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Home Repairs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Cleaning</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Electrical</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Painting</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin text-2xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 Local Service Finder. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize map centered on Vadakara
+        let map;
+        let markers = [];
+        const vadakaraLocation = [11.6090, 75.5912]; // Vadakara coordinates
+
+        function initMap() {
+            // Create map centered on Vadakara
+            map = L.map('map').setView(vadakaraLocation, 13);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Add marker for Vadakara center
+            L.marker(vadakaraLocation, {
+                title: "Vadakara Center"
+            }).addTo(map);
+
+            // Sample service providers
+            const sampleProviders = [
+                { lat: 11.6120, lng: 75.5932, name: "Ravi's Home Repairs", rating: 4.5, category: "Home Repairs" },
+                { lat: 11.6080, lng: 75.5892, name: "Clean Pro Services", rating: 4.8, category: "Cleaning" },
+                { lat: 11.6150, lng: 75.5922, name: "Kerala Electrical Solutions", rating: 4.6, category: "Electrical" },
+                { lat: 11.6060, lng: 75.5942, name: "Perfect Painters", rating: 4.7, category: "Painting" }
+            ];
+
+            // Add markers for service providers
+            sampleProviders.forEach(provider => {
+                addServiceProviderMarker(provider);
+            });
+
+            // Add a circle to show 20km radius
+            L.circle(vadakaraLocation, {
+                color: '#4F46E5',
+                fillColor: '#4F46E5',
+                fillOpacity: 0.1,
+                radius: 5000 // 5km in meters
+            }).addTo(map);
+        }
+
+        function addServiceProviderMarker(provider) {
+            const marker = L.marker([provider.lat, provider.lng], {
+                title: provider.name
+            });
+
+            const popupContent = `
+                <div class="p-2">
+                    <h3 class="font-bold">${provider.name}</h3>
+                    <p class="text-sm">${provider.category}</p>
+                    <p class="text-sm">Rating: ${provider.rating} ⭐</p>
+                    <button onclick="bookService('${provider.name}')" 
+                            class="mt-2 bg-indigo-600 text-white px-4 py-1 rounded text-sm">
+                        Book Now
+                    </button>
+                </div>
+            `;
+
+            marker.bindPopup(popupContent);
+            marker.addTo(map);
+            markers.push({
+                marker: marker,
+                category: provider.category
+            });
+        }
+
+        // Modified search function to work with map
+        function searchServices() {
+            const location = document.getElementById('locationInput').value.toLowerCase();
+            const service = document.getElementById('serviceInput').value.toLowerCase();
+            
+            if (!location || !service) {
+                alert('Please enter both location and service type');
+                return;
+            }
+
+            // Filter markers based on service type
+            markers.forEach(({marker, category}) => {
+                if (category.toLowerCase().includes(service)) {
+                    marker.setOpacity(1);
+                } else {
+                    marker.setOpacity(0.2);
+                }
+            });
+
+            // Center map on Vadakara
+            map.setView(vadakaraLocation, 14);
+        }
+
+        // Initialize map when page loads
+        window.onload = initMap;
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Booking function
+        function bookService(serviceName) {
+            const isLoggedIn = false; // Replace with actual login check
+            
+            if (!isLoggedIn) {
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            alert(`Booking ${serviceName} service. You'll be redirected to booking page.`);
+        }
+    </script>
+</body>
+</html>

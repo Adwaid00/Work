@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Dashboard - Local Service Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <h1 class="text-xl font-bold text-gray-800 ml-2">Local Service Finder</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="notificationsBtn" class="relative p-2 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <button id="logoutBtn" class="text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-sign-out-alt text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Banner -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-6 mb-8 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold" id="welcomeMessage">Welcome back!</h2>
+                    <p class="mt-2">Manage your services and availability</p>
+                </div>
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-blue-600 text-3xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Profile Section -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Profile</h2>
+                    <i class="fas fa-user-circle text-blue-600 text-2xl"></i>
+                </div>
+                <div id="profileInfo" class="space-y-4">
+                    <!-- Profile information will be loaded here -->
+                </div>
+                <button id="updateProfileBtn" class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">
+                    <i class="fas fa-edit mr-2"></i>Update Profile
+                </button>
+            </div>
+
+            <!-- Availability Section -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Availability</h2>
+                    <i class="fas fa-clock text-blue-600 text-2xl"></i>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Current Status</label>
+                        <select id="availabilityStatus" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Location</label>
+                        <div class="grid grid-cols-2 gap-4 mt-1">
+                            <input type="number" id="latitude" placeholder="Latitude" step="any" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <input type="number" id="longitude" placeholder="Longitude" step="any" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <button id="updateAvailabilityBtn" class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">
+                        <i class="fas fa-save mr-2"></i>Update Availability
+                    </button>
+                </div>
+            </div>
+
+            <!-- Jobs Section -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">My Jobs</h2>
+                    <i class="fas fa-briefcase text-blue-600 text-2xl"></i>
+                </div>
+                <div id="jobsList" class="space-y-4">
+                    <!-- Jobs will be listed here -->
+                </div>
+                <button id="addJobBtn" class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">
+                    <i class="fas fa-plus mr-2"></i>Add New Job
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-blue-100 rounded-full">
+                        <i class="fas fa-calendar-check text-blue-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-600">Total Jobs</p>
+                        <p class="text-2xl font-bold" id="totalJobs">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-green-100 rounded-full">
+                        <i class="fas fa-star text-green-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-600">Rating</p>
+                        <p class="text-2xl font-bold" id="rating">0.0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-yellow-100 rounded-full">
+                        <i class="fas fa-clock text-yellow-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-600">Active Hours</p>
+                        <p class="text-2xl font-bold" id="activeHours">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-purple-100 rounded-full">
+                        <i class="fas fa-users text-purple-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm text-gray-600">Customers</p>
+                        <p class="text-2xl font-bold" id="totalCustomers">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check if user is logged in
+        async function checkAuth() {
+            try {
+                const response = await fetch('/user');
+                if (!response.ok) {
+                    window.location.href = '/provider-login.html';
+                    return;
+                }
+                const user = await response.json();
+                loadProfile(user);
+                loadJobs(user.id);
+                updateWelcomeMessage(user.username);
+                updateStats();
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/provider-login.html';
+            }
+        }
+
+        // Update welcome message
+        function updateWelcomeMessage(username) {
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${username}!`;
+        }
+
+        // Load profile information
+        function loadProfile(user) {
+            const profileInfo = document.getElementById('profileInfo');
+            profileInfo.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-user text-gray-400 mr-2"></i>
+                    <div>
+                        <p class="text-sm text-gray-600">Name</p>
+                        <p class="font-medium">${user.username}</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-envelope text-gray-400 mr-2"></i>
+                    <div>
+                        <p class="text-sm text-gray-600">Email</p>
+                        <p class="font-medium">${user.email}</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-tag text-gray-400 mr-2"></i>
+                    <div>
+                        <p class="text-sm text-gray-600">Service Category</p>
+                        <p class="font-medium">${user.category}</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-dollar-sign text-gray-400 mr-2"></i>
+                    <div>
+                        <p class="text-sm text-gray-600">Hourly Rate</p>
+                        <p class="font-medium">$${user.hourlyRate}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load jobs
+        async function loadJobs(userId) {
+            try {
+                const response = await fetch('/jobs');
+                const jobs = await response.json();
+                const userJobs = jobs.filter(job => job.userId === userId);
+                
+                const jobsList = document.getElementById('jobsList');
+                jobsList.innerHTML = userJobs.map(job => `
+                    <div class="border rounded-lg p-4 hover:shadow-md transition duration-300">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium">${job.title}</h3>
+                            <span class="px-2 py-1 text-xs rounded-full ${job.isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${job.isAvailable ? 'Available' : 'Unavailable'}
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-2">${job.description}</p>
+                        <div class="flex items-center mt-2 text-sm text-gray-500">
+                            <i class="fas fa-map-marker-alt mr-1"></i>
+                            <span>${job.location}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load jobs:', error);
+            }
+        }
+
+        // Update stats
+        async function updateStats() {
+            try {
+                const response = await fetch('/stats');
+                const stats = await response.json();
+                document.getElementById('totalJobs').textContent = stats.totalJobs;
+                document.getElementById('rating').textContent = stats.rating;
+                document.getElementById('activeHours').textContent = stats.activeHours;
+                document.getElementById('totalCustomers').textContent = stats.totalCustomers;
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        // Update availability
+        document.getElementById('updateAvailabilityBtn').addEventListener('click', async () => {
+            const status = document.getElementById('availabilityStatus').value;
+            const lat = document.getElementById('latitude').value;
+            const lng = document.getElementById('longitude').value;
+
+            try {
+                const response = await fetch('/update-availability', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        isAvailable: status === 'available',
+                        latitude: parseFloat(lat),
+                        longitude: parseFloat(lng)
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Availability updated successfully');
+                    loadJobs(userId); // Refresh jobs list
+                } else {
+                    alert('Failed to update availability');
+                }
+            } catch (error) {
+                console.error('Error updating availability:', error);
+                alert('Failed to update availability');
+            }
+        });
+
+        // Add new job
+        document.getElementById('addJobBtn').addEventListener('click', () => {
+            window.location.href = '/add.html';
+        });
+
+        // Update profile
+        document.getElementById('updateProfileBtn').addEventListener('click', () => {
+            window.location.href = '/register.html';
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/logout');
+                if (response.ok) {
+                    window.location.href = '/provider-login.html';
+                }
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        });
+
+        // Initialize
+        checkAuth();
+    </script>
+</body>
+</html> 

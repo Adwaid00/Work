@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Service - Local Service Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-blue-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-white text-2xl font-bold">Local Service Finder</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <h1 class="text-2xl font-bold mb-6">Post a Service</h1>
+            <form action="/add-job" method="POST" class="space-y-6">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700">Service Title</label>
+                    <input type="text" id="title" name="title" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                    <select id="category" name="category" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <option value="">Select a category</option>
+                        <option value="plumber">Plumber</option>
+                        <option value="electrician">Electrician</option>
+                        <option value="carpenter">Carpenter</option>
+                        <option value="painter">Painter</option>
+                        <option value="gardener">Gardener</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-700">Address</label>
+                    <input type="text" id="location" name="location" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea id="description" name="description" rows="4" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Location on Map</label>
+                    <div id="map" class="h-64 rounded-lg mb-2"></div>
+                    <button type="button" id="use-location" 
+                        class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 mb-2">
+                        Use My Location
+                    </button>
+                    <input type="hidden" id="latitude" name="latitude" required>
+                    <input type="hidden" id="longitude" name="longitude" required>
+                </div>
+
+                <div class="flex justify-end space-x-4">
+                    <a href="/" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200">Cancel</a>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                        Post Service
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        let map;
+        let marker;
+
+        // Initialize map
+        mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN'; // Replace with your Mapbox token
+        map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-74.5, 40],
+            zoom: 9
+        });
+
+        // Add click handler to map
+        map.on('click', (e) => {
+            updateMarker(e.lngLat);
+        });
+
+        // Handle "Use My Location" button
+        document.getElementById('use-location').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lngLat = {
+                        lng: position.coords.longitude,
+                        lat: position.coords.latitude
+                    };
+                    map.setCenter([lngLat.lng, lngLat.lat]);
+                    map.setZoom(15);
+                    updateMarker(lngLat);
+                });
+            }
+        });
+
+        function updateMarker(lngLat) {
+            if (marker) {
+                marker.remove();
+            }
+            marker = new mapboxgl.Marker()
+                .setLngLat(lngLat)
+                .addTo(map);
+
+            // Update hidden inputs
+            document.getElementById('latitude').value = lngLat.lat;
+            document.getElementById('longitude').value = lngLat.lng;
+        }
+    </script>
+</body>
+</html>

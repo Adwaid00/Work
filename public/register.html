@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Local Service Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            min-height: 100vh;
+        }
+
+        .nav-gradient {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+        }
+
+        .card-gradient {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .progress-bar {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+
+        .social-icon {
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .checkbox-custom {
+            accent-color: var(--primary);
+        }
+
+        .file-upload {
+            border: 2px dashed #E5E7EB;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <nav class="nav-gradient shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex items-center cursor-pointer" onclick="window.location.href='/'">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <h1 class="text-xl font-bold text-white ml-2">Local Service Finder</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="card-gradient rounded-2xl p-8 shadow-xl">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-3xl font-bold section-title">Create Your Account</h2>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-600">Profile Completion:</span>
+                    <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="progressBar" class="h-full progress-bar rounded-full" style="width: 0%"></div>
+                    </div>
+                    <span id="progressText" class="text-sm font-medium text-gray-700">0%</span>
+                </div>
+            </div>
+
+            <form id="registerForm" class="space-y-8" enctype="multipart/form-data">
+                <!-- Basic Information Section -->
+                <div class="border-b border-gray-200 pb-8">
+                    <h3 class="text-xl font-semibold section-title mb-6">Basic Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                            <input type="text" name="username" required 
+                                class="input-focus w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <div class="relative">
+                                <input type="email" name="email" required 
+                                    class="input-focus w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <i class="fas fa-check-circle text-green-500 hidden" id="emailVerified"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                            <input type="tel" name="phone" required 
+                                class="input-focus w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <div class="relative">
+                                <input type="password" name="password" required 
+                                    class="input-focus w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <i class="fas fa-eye cursor-pointer text-gray-400 hover:text-gray-600" id="togglePassword"></i>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-1/4 h-1 rounded-full bg-gray-200">
+                                        <div id="passwordStrength" class="h-full rounded-full"></div>
+                                    </div>
+                                    <span id="passwordStrengthText" class="text-xs text-gray-500">Weak</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Section -->
+                <div class="border-b border-gray-200 pb-8">
+                    <h3 class="text-xl font-semibold section-title mb-6">Address</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+                            <input type="text" name="street" required 
+                                class="input-focus w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                            <input type="text" name="city" required 
+                                class="input-focus w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">State/Province</label>
+                            <input type="text" name="state" required 
+                                class="input-focus w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
+                            <input type="text" name="postalCode" required 
+                                class="input-focus w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Type Section -->
+                <div class="border-b border-gray-200 pb-8">
+                    <h3 class="text-xl font-semibold section-title mb-6">Account Type</h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">User Type</label>
+                        <select name="userType" required id="userTypeSelect"
+                            class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="customer">Customer</option>
+                            <option value="service_provider">Service Provider</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Service Provider Fields -->
+                <div id="serviceProviderFields" class="hidden space-y-8">
+                    <div class="border-b border-gray-200 pb-6">
+                        <h3 class="text-xl font-semibold section-title mb-4">Service Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Service Category</label>
+                                <select name="category" class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="plumber">Plumber</option>
+                                    <option value="electrician">Electrician</option>
+                                    <option value="carpenter">Carpenter</option>
+                                    <option value="painter">Painter</option>
+                                    <option value="gardener">Gardener</option>
+                                    <option value="driver">Driver</option>
+                                    <option value="catering">Catering</option>
+                                    <option value="cleaning">Cleaning</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Experience Level</label>
+                                <select name="experience" class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="beginner">Beginner (0-2 years)</option>
+                                    <option value="intermediate">Intermediate (2-5 years)</option>
+                                    <option value="expert">Expert (5+ years)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Service Radius (km)</label>
+                                <input type="number" name="serviceRadius" min="1" max="100" value="10"
+                                    class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Hourly Rate ($)</label>
+                                <input type="number" name="hourlyRate" min="0" step="0.01"
+                                    class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-b border-gray-200 pb-6">
+                        <h3 class="text-xl font-semibold section-title mb-4">Profile Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
+                                <div class="mt-1 flex items-center">
+                                    <div class="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                                        <img id="profilePreview" src="" alt="" class="hidden w-full h-full object-cover">
+                                        <i class="fas fa-user text-gray-400 text-3xl"></i>
+                                    </div>
+                                    <input type="file" name="profilePicture" accept="image/*" class="ml-4 input-focus">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Social Media Links</label>
+                                <div class="mt-2 space-y-2">
+                                    <div class="flex items-center">
+                                        <i class="fab fa-facebook text-blue-600 w-6 social-icon"></i>
+                                        <input type="url" name="facebook" placeholder="Facebook URL"
+                                            class="ml-2 input-focus block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fab fa-instagram text-pink-600 w-6 social-icon"></i>
+                                        <input type="url" name="instagram" placeholder="Instagram URL"
+                                            class="ml-2 input-focus block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fab fa-linkedin text-blue-700 w-6 social-icon"></i>
+                                        <input type="url" name="linkedin" placeholder="LinkedIn URL"
+                                            class="ml-2 input-focus block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea name="description" rows="3"
+                                class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                        </div>
+
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700">Skills (comma separated)</label>
+                            <input type="text" name="skills"
+                                class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="border-b border-gray-200 pb-6">
+                        <h3 class="text-xl font-semibold section-title mb-4">Availability</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Working Hours</label>
+                                <div class="mt-2 space-y-2">
+                                    <div class="flex items-center space-x-2">
+                                        <input type="time" name="startTime" class="input-focus rounded-lg border-gray-300 shadow-sm">
+                                        <span>to</span>
+                                        <input type="time" name="endTime" class="input-focus rounded-lg border-gray-300 shadow-sm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Working Days</label>
+                                <div class="mt-2 grid grid-cols-7 gap-2">
+                                    <label class="flex items-center justify-center">
+                                        <input type="checkbox" name="workingDays" value="monday" class="checkbox-custom rounded border-gray-300">
+                                        <span class="ml-2">M</span>
+                                    </label>
+                                    <label class="flex items-center justify-center">
+                                        <input type="checkbox" name="workingDays" value="tuesday" class="checkbox-custom rounded border-gray-300">
+                                        <span class="ml-2">T</span>
+                                    </label>
+                                    <label class="flex items-center justify-center">
+                                        <input type="checkbox" name="workingDays" value="wednesday" class="checkbox-custom rounded border-gray-300">
+                                        <span class="ml-2">W</span>
+                                    </label>
+                                    <label class="flex items-center justify-center">
+                                        <input type="checkbox" name="workingDays" value="thursday" class="checkbox-custom rounded border-gray-300">
+                                        <span class="ml-2">T</span>
+                                    </label>
+                                    <label class="flex items-center justify-center">
+                                        <input type="checkbox" name="workingDays" value="friday" class="checkbox-custom rounded border-gray-300">
+                                        <span class="ml-2">F</span>
+                                    </label>
+                                    <label class="flex items-center justify-center">
+                                        <input type="checkbox" name="workingDays" value="saturday" class="checkbox-custom rounded border-gray-300">
+                                        <span class="ml-2">S</span>
+                                    </label>
+                                    <label class="flex items-center justify-center">
+                                        <input type="checkbox" name="workingDays" value="sunday" class="checkbox-custom rounded border-gray-300">
+                                        <span class="ml-2">S</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category-specific fields -->
+                    <div id="cateringFields" class="hidden space-y-8">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cuisine Type</label>
+                            <input type="text" name="cuisineType" class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Maximum Guests</label>
+                            <input type="number" name="maxGuests" min="1" class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Dietary Options</label>
+                            <div class="mt-2 space-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="dietaryOptions" value="vegetarian" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Vegetarian</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="dietaryOptions" value="vegan" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Vegan</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="dietaryOptions" value="gluten-free" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Gluten-free</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="dietaryOptions" value="halal" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Halal</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Equipment Provided</label>
+                            <div class="mt-2 space-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="equipment" value="tables" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Tables</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="equipment" value="chairs" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Chairs</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="equipment" value="serving_equipment" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Serving Equipment</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="equipment" value="tableware" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Tableware</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Setup Time (hours)</label>
+                            <input type="number" name="setupTime" min="1" class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Menu Photos</label>
+                            <input type="file" name="menuPhotos" accept="image/*" multiple class="input-focus mt-1 block w-full">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Work Photos</label>
+                            <input type="file" name="workPhotos" accept="image/*" multiple class="input-focus mt-1 block w-full">
+                        </div>
+                    </div>
+
+                    <div id="cleaningFields" class="hidden space-y-8">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cleaning Types</label>
+                            <div class="mt-2 space-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningTypes" value="residential" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Residential</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningTypes" value="commercial" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Commercial</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningTypes" value="deep_cleaning" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Deep Cleaning</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningTypes" value="move_in_out" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Move In/Out</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cleaning Equipment</label>
+                            <div class="mt-2 space-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningEquipment" value="vacuum" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Vacuum Cleaner</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningEquipment" value="steam_cleaner" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Steam Cleaner</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningEquipment" value="carpet_cleaner" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Carpet Cleaner</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningEquipment" value="window_cleaning" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Window Cleaning Tools</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cleaning Supplies</label>
+                            <div class="mt-2 space-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningSupplies" value="eco_friendly" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Eco-friendly Products</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningSupplies" value="disinfectants" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Disinfectants</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="cleaningSupplies" value="specialized" class="checkbox-custom rounded border-gray-300 text-blue-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <span class="ml-2">Specialized Cleaners</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Team Size</label>
+                            <input type="number" name="teamSize" min="1" class="input-focus mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Work Photos</label>
+                            <input type="file" name="workPhotos" accept="image/*" multiple class="input-focus mt-1 block w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="border-b border-gray-200 pb-6">
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" name="terms" required
+                                class="checkbox-custom h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        </div>
+                        <div class="ml-3">
+                            <label class="text-sm text-gray-700">
+                                I agree to the <a href="#" class="text-blue-600 hover:text-blue-500">Terms of Service</a> and
+                                <a href="#" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-medium">
+                        Create Account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userTypeSelect = document.getElementById('userTypeSelect');
+            const serviceProviderFields = document.getElementById('serviceProviderFields');
+            const categorySelect = document.querySelector('select[name="category"]');
+            const cateringFields = document.getElementById('cateringFields');
+            const cleaningFields = document.getElementById('cleaningFields');
+            const passwordInput = document.querySelector('input[name="password"]');
+            const passwordStrength = document.getElementById('passwordStrength');
+            const passwordStrengthText = document.getElementById('passwordStrengthText');
+            const togglePassword = document.getElementById('togglePassword');
+            const profilePictureInput = document.querySelector('input[name="profilePicture"]');
+            const profilePreview = document.getElementById('profilePreview');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            // Password strength checker
+            passwordInput.addEventListener('input', () => {
+                const password = passwordInput.value;
+                let strength = 0;
+                let color = 'bg-red-500';
+                let text = 'Weak';
+
+                if (password.length >= 8) strength++;
+                if (password.match(/[a-z]/)) strength++;
+                if (password.match(/[A-Z]/)) strength++;
+                if (password.match(/[0-9]/)) strength++;
+                if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+                switch (strength) {
+                    case 1:
+                        color = 'bg-red-500';
+                        text = 'Weak';
+                        break;
+                    case 2:
+                        color = 'bg-yellow-500';
+                        text = 'Fair';
+                        break;
+                    case 3:
+                        color = 'bg-blue-500';
+                        text = 'Good';
+                        break;
+                    case 4:
+                    case 5:
+                        color = 'bg-green-500';
+                        text = 'Strong';
+                        break;
+                }
+
+                passwordStrength.className = `h-full rounded-full ${color}`;
+                passwordStrength.style.width = `${(strength / 5) * 100}%`;
+                passwordStrengthText.textContent = text;
+            });
+
+            // Toggle password visibility
+            togglePassword.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                togglePassword.classList.toggle('fa-eye');
+                togglePassword.classList.toggle('fa-eye-slash');
+            });
+
+            // Profile picture preview
+            profilePictureInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profilePreview.src = e.target.result;
+                        profilePreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Toggle service provider fields
+            userTypeSelect.addEventListener('change', () => {
+                if (userTypeSelect.value === 'service_provider') {
+                    serviceProviderFields.classList.remove('hidden');
+                } else {
+                    serviceProviderFields.classList.add('hidden');
+                }
+                updateProgress();
+            });
+
+            // Toggle category-specific fields
+            categorySelect.addEventListener('change', () => {
+                if (categorySelect.value === 'catering') {
+                    cateringFields.classList.remove('hidden');
+                    cleaningFields.classList.add('hidden');
+                } else if (categorySelect.value === 'cleaning') {
+                    cleaningFields.classList.remove('hidden');
+                    cateringFields.classList.add('hidden');
+                } else {
+                    cateringFields.classList.add('hidden');
+                    cleaningFields.classList.add('hidden');
+                }
+                updateProgress();
+            });
+
+            // Update progress bar
+            function updateProgress() {
+                const form = document.getElementById('registerForm');
+                const requiredFields = form.querySelectorAll('[required]');
+                const filledFields = Array.from(requiredFields).filter(field => field.value.trim() !== '');
+                const progress = (filledFields.length / requiredFields.length) * 100;
+                
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}%`;
+            }
+
+            // Add input event listeners to all form fields
+            document.querySelectorAll('input, select, textarea').forEach(field => {
+                field.addEventListener('input', updateProgress);
+            });
+
+            // Form submission
+            document.getElementById('registerForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const userType = formData.get('userType');
+
+                try {
+                    const response = await fetch('/register', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        if (userType === 'customer') {
+                            window.location.href = '/login.html';
+                        } else {
+                            window.location.href = '/provider-login.html';
+                        }
+                    } else {
+                        const error = await response.json();
+                        alert(error.error || 'Registration failed');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Registration failed');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

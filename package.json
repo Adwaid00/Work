@@ -1,0 +1,23 @@
+{
+  "name": "local-job-finder",
+  "version": "1.0.0",
+  "description": "A local job finder application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.3.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
